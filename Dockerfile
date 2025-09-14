@@ -13,8 +13,8 @@
     # Copy the rest of the project
     COPY . .
     
-    # Build the Go server
-    RUN go build -o server cmd/server/main.go
+    # Build a fully static Go binary for Alpine
+    RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o server cmd/server/main.go
     
     # Build static docs
     RUN ./mdbook build
@@ -25,7 +25,7 @@
     
     WORKDIR /root/
     
-    # Copy the server binary and the book folder
+    # Copy the statically built server binary and the book folder
     COPY --from=build /app/server .
     COPY --from=build /app/book ./book
     
